@@ -1,0 +1,36 @@
+{
+  "name": "exercise-tracker",
+  "version": "1.0.0",
+  "description": "A simple node app that tracks and logs exercise",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/somanath08/Exercise-Tracker.git"
+  },
+  "keywords": [
+    "Exercise",
+    "Tracker",
+    "Freecodecamp",
+    "API"
+  ],
+  "author": "Sai Somanath Komanduri",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/somanath08/Exercise-Tracker/issues"
+  },
+  "homepage": "https://github.com/somanath08/Exercise-Tracker#readme",
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.0",
+    "eslint-plugin-react": "^7.10.0"
+  },
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
