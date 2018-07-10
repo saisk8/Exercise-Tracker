@@ -53,19 +53,30 @@ app.post('/api/new-user', (request, response) => {
 
 app.post('/api/add', (request, response) => {
   // Find if the user exists in the database
+  let updatedLog;
   const query = { id: request.body.id };
   const tempDoc = User.findOne(query, (err, doc) => {
     if (err) return false;
     return doc;
   });
   if (tempDoc) {
-    const updatedLog = tempDoc.log.push([
-      {
-        description: request.body.description,
-        duration: request.body.duration,
-        date: request.body.date || new Date(),
-      },
-    ]);
+    if (tempDoc.log) {
+      updatedLog = tempDoc.log.push([
+        {
+          description: request.body.description,
+          duration: request.body.duration,
+          date: request.body.date || new Date(),
+        },
+      ]);
+    } else {
+      updatedLog = [
+        {
+          description: request.body.description,
+          duration: request.body.duration,
+          date: request.body.date || new Date(),
+        },
+      ];
+    }
     Exercise.updateOne(query, { log: updatedLog }, (err) => {
       if (err) return console.error(err); //eslint-disable-line
       return true;
