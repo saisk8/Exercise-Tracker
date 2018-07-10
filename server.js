@@ -7,11 +7,23 @@ const mongoose = require('mongoose');
 const shortid = require('shortid');
 
 const app = express();
-mongoose.connect('mongodb://localhost/test' || process.env.MONGO_URI);
+mongoose.connect('mongodb://localhost:27017/test');
 
 // Schemas
 const newUserSchema = mongoose.Schema({
   name: String,
+  id: String,
+});
+
+const exercise = mongoose.Schema({
+  id: String,
+  log: [
+    {
+      description: String,
+      duration: Number,
+      date: String,
+    },
+  ],
 });
 
 const db = mongoose.connection;
@@ -27,16 +39,16 @@ app.get('/', (request, response) => {
 });
 
 app.post('/api/new-user', (request, response) => {
-  db.on('open', () => {
-    const NewUser = mongoose.model('NewUser', newUserSchema);
-    const id = shortid.generate();
-    const newUser = new NewUser({ name: request.body.name, id });
-    newUser.save((err) => {
-      if (err) return console.error(err); // eslint-disable-line
-      return true;
-    });
-    response.json(newUser);
+  console.log('Connection openned'); //eslint-disable-line
+  const NewUser = mongoose.model('NewUser', newUserSchema);
+  const id = shortid.generate();
+  const newUser = new NewUser({ name: request.body.username, id });
+  newUser.save((err) => {
+    if (err) return console.error(err); // eslint-disable-line
+    return console.log('Saved'); // eslint-disable-line
   });
+  response.json(newUser);
 });
 
+app.post('/api/add', (request, response) => {});
 app.listen(process.env.PORT || 3000);
