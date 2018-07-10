@@ -14,6 +14,7 @@ const newUserSchema = mongoose.Schema({
   name: String,
   id: String,
 });
+const User = mongoose.model('User', newUserSchema);
 
 const exercise = mongoose.Schema({
   id: String,
@@ -25,6 +26,7 @@ const exercise = mongoose.Schema({
     },
   ],
 });
+const Exercise = mongoose.model('Exercise', exercise);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:')); // eslint-disable-line
@@ -40,9 +42,8 @@ app.get('/', (request, response) => {
 
 app.post('/api/new-user', (request, response) => {
   console.log('Connection openned'); //eslint-disable-line
-  const NewUser = mongoose.model('NewUser', newUserSchema);
   const id = shortid.generate();
-  const newUser = new NewUser({ name: request.body.username, id });
+  const newUser = new User({ name: request.body.username, id });
   newUser.save((err) => {
     if (err) return console.error(err); // eslint-disable-line
     return console.log('Saved'); // eslint-disable-line
@@ -50,5 +51,33 @@ app.post('/api/new-user', (request, response) => {
   response.json(newUser);
 });
 
-app.post('/api/add', (request, response) => {});
+app.post('/api/add', (request, response) => {
+  // Find if the user exists in the database
+  const query = { id: request.body.id };
+  const tempDoc = User.findOne(query, (err, doc) => {
+    if (err) return false;
+    return doc;
+  });
+  if (tempDoc) {
+    const updatedLog = tempDoc.log.push([
+      {
+        description: request.body.description,
+        duration: request.body.duration,
+        date: request.body.date || new Date(),
+      },
+    ]);
+    Exercise.updateOne(query, { log: updatedLog }, (err) => {
+      if (err) return console.error(err); //eslint-disable-line
+      return true;
+    });
+    response.json({
+      id: request.body.id,
+      name: request.body.name,
+      description: request.body.description,
+      duration: request.body.duration,
+      date: request.body.date || new Date(),
+    });
+  }
+});
+
 app.listen(process.env.PORT || 3000);
