@@ -17,10 +17,10 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Create New User</h5>
-          <p class="card-text"><code> POST /exercise/new-user </code></p>
-          <form action="#" method="post">
+          <p class="card-text"><code> POST /api/new-user </code></p>
+          <form action="http://localhost:3000/api/new-user" method="post">
             <label for="username">Username:
-              <input type="text" name="username" value="" placeholder="Name" required>
+              <input type="text" name="username" id="username" placeholder="Name" required>
             </label><br>
             <button class="btn btn-primary" type="submit">Create</button>
           </form>
@@ -31,7 +31,7 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Add Exercise</h5>
-          <p class="card-text"><code> POST /exercise/add </code></p>
+          <p class="card-text"><code> POST /api/add </code></p>
           <form class="" action="#" method="post">
             <label for="username">Username:
               <input type="text" name="username" value="" placeholder="Name" required>
