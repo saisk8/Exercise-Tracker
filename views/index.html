@@ -32,18 +32,21 @@
         <div class="card-body">
           <h5 class="card-title">Add Exercise</h5>
           <p class="card-text"><code> POST /api/add </code></p>
-          <form class="" action="#" method="post">
-            <label for="username">Username:
-              <input type="text" name="username" value="" placeholder="Name" required>
+          <form class="" action="http://localhost:3000/api/add" method="post">
+            <label for="name">Username:
+              <input type="text" name="name" placeholder="Name" required>
             </label><br>
-            <label for="userID">User ID:
-              <input type="text" name="userId" value="" placeholder="User ID" required>
+            <label for="id">User ID:
+              <input type="text" name="id" placeholder="User ID" required>
+            </label><br>
+            <label for="description">Description:
+              <input type="text" name="description" placeholder="Duration(mins)" required>
             </label><br>
             <label for="duration">Duration:
               <input type="number" name="duration" value="" placeholder="Duration(mins)" required>
             </label><br>
             <label for="date">Date:
-              <input type="date" name="date" value="" placeholder="Date" required>
+              <input type="date" name="date" value="" placeholder="Date">
             </label><br>
             <button class="btn btn-primary" type="submit">Add</button>
           </form>
