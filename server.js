@@ -98,7 +98,20 @@ app.post('/api/add', (request, response) => {
       date: updatedLog[0].date,
     });
   } else {
+    // If no such user
     response.send('User not found');
+  }
+});
+
+app.get('/api/log', (request, response) => {
+  const doc = Exercise.findOne({ id: request.query.id }, (err, document) => {
+    if (err) return false;
+    return document;
+  });
+  if (doc) {
+    response.json({ Logs: doc.logs[0] });
+  } else {
+    response.send('No logs found!');
   }
 });
 app.listen(process.env.PORT || 3000);
