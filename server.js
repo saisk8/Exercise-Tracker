@@ -5,6 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const shortid = require('shortid');
+const moment = require('moment');
 
 const app = express();
 mongoose.connect('mongodb://localhost:27017/test');
@@ -65,7 +66,11 @@ app.post('/api/add', (request, response) => {
         {
           description: request.body.description,
           duration: request.body.duration,
-          date: request.body.date || new Date(),
+          date: request.body.date
+            ? moment(request.body.date, 'ddd MMM Do YYYY').toString()
+            : moment()
+              .format('ddd MMM Do YYYY')
+              .toString(),
         },
       ]);
     } else {
@@ -73,7 +78,11 @@ app.post('/api/add', (request, response) => {
         {
           description: request.body.description,
           duration: request.body.duration,
-          date: request.body.date || new Date(),
+          date: request.body.date
+            ? moment(request.body.date, 'ddd MMM Do YYYY').toString()
+            : moment()
+              .format('ddd MMM Do YYYY')
+              .toString(),
         },
       ];
     }
@@ -86,9 +95,8 @@ app.post('/api/add', (request, response) => {
       name: request.body.name,
       description: request.body.description,
       duration: request.body.duration,
-      date: request.body.date || new Date(),
+      date: updatedLog[0].date,
     });
   }
 });
-
 app.listen(process.env.PORT || 3000);
