@@ -19,9 +19,8 @@
           <h5 class="card-title">Create New User</h5>
           <p class="card-text"><code> POST /api/new-user </code></p>
           <form action="http://localhost:3000/api/new-user" method="post">
-            <label for="username">Username:
-              <input type="text" name="username" id="username" placeholder="Name" required>
-            </label><br>
+            <input type="text" name="username" id="username" placeholder="Name" required>
+            <br>
             <button class="btn btn-primary" type="submit">Create</button>
           </form>
         </div>
@@ -33,21 +32,13 @@
           <h5 class="card-title">Add Exercise</h5>
           <p class="card-text"><code> POST /api/add </code></p>
           <form class="" action="http://localhost:3000/api/add" method="post">
-            <label for="name">Username:
-              <input type="text" name="name" placeholder="Name" required>
-            </label><br>
-            <label for="id">User ID:
-              <input type="text" name="id" placeholder="User ID" required>
-            </label><br>
-            <label for="description">Description:
-              <input type="text" name="description" placeholder="Duration(mins)" required>
-            </label><br>
-            <label for="duration">Duration:
-              <input type="number" name="duration" value="" placeholder="Duration(mins)" required>
-            </label><br>
-            <label for="date">Date:
-              <input type="date" name="date" value="" placeholder="Date">
-            </label><br>
+            <input type="text" name="id" placeholder="User ID" required>
+            <br>
+            <input type="text" name="description" placeholder="Description" required><br>
+            <input type="number" name="duration" value="" placeholder="Duration(mins)" required>
+            <br>
+            <input type="date" name="date" value="" placeholder="Date">
+            <br>
             <button class="btn btn-primary" type="submit">Add</button>
           </form>
         </div>
