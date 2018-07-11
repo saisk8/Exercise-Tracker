@@ -92,11 +92,13 @@ app.post('/api/add', (request, response) => {
     });
     response.json({
       id: request.body.id,
-      name: request.body.name,
+      name: tempDoc.name,
       description: request.body.description,
       duration: request.body.duration,
       date: updatedLog[0].date,
     });
+  } else {
+    response.send('User not found');
   }
 });
 app.listen(process.env.PORT || 3000);
