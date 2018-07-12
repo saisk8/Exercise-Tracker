@@ -11,28 +11,6 @@ const Exercise = require('./models/Exercise');
 const app = express();
 mongoose.connect('mongodb://localhost:27017/new');
 
-// Schemas
-const newUserSchema = mongoose.Schema(
-  {
-    name: String,
-    userId: String,
-  },
-  { _id: false },
-);
-const User = mongoose.model('User', newUserSchema);
-
-const exercise = mongoose.Schema(
-  {
-    userId: String,
-    description: String,
-    duration: Number,
-    date: Date,
-  },
-  { _id: false },
-);
-
-const Exercise = mongoose.model('Exercise', exercise);
-
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:')); // eslint-disable-line
 
@@ -74,9 +52,8 @@ app.post('/api/add', (request, response) => {
         duration: request.body.duration,
         date: new Date(),
       });
-    console.log(newExercise);
     newExercise.save((error) => {
-      if (error) return console.log(error);
+      if (error) return response.send('Could not save the log, please try again');
       return true;
     });
     return response.json(newExercise);
@@ -95,13 +72,13 @@ app.get('/api/log', (request, response) => {
   }
   if (request.query.limit) {
     Exercise.find(query).exec((err, log) => {
-      if (err) return console.log(err);
+      if (err) return response.send('Error while searching, try again');
       if (!log) return response.send('No logs found');
       return response.json({ Logs: log.slice(request.query.limit) });
     });
   } else {
     Exercise.find(query).exec((err, log) => {
-      if (err) return console.log(err);
+      if (err) return response.send('Error while searching, try again');
       if (!log) return response.send('No logs found');
       return response.json(log);
     });
