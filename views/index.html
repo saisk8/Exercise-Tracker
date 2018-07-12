@@ -13,33 +13,49 @@
 <body class="container-fluid">
   <h1>Hello, world!</h1>
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-4">
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Create New User</h5>
           <p class="card-text"><code> POST /api/new-user </code></p>
           <form action="http://localhost:3000/api/new-user" method="post">
-            <input type="text" name="username" id="username" placeholder="Name" required>
+            <input type="text" name="name" id="name" placeholder="Name*" required>
             <br>
             <button class="btn btn-primary" type="submit">Create</button>
           </form>
         </div>
       </div>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-4">
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Add Exercise</h5>
           <p class="card-text"><code> POST /api/add </code></p>
           <form class="" action="http://localhost:3000/api/add" method="post">
-            <input type="text" name="id" placeholder="User ID" required>
+            <input type="text" name="id" placeholder="User ID*" required>
             <br>
-            <input type="text" name="description" placeholder="Description" required><br>
-            <input type="number" name="duration" value="" placeholder="Duration(mins)" required>
+            <input type="text" name="description" placeholder="Description*" required><br>
+            <input type="number" name="duration" value="" placeholder="Duration(mins)*" required>
             <br>
             <input type="date" name="date" value="" placeholder="Date">
             <br>
             <button class="btn btn-primary" type="submit">Add</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Add Exercise</h5>
+          <p class="card-text"><code> POST /api/add </code></p>
+          <form class="" action="http://localhost:3000/api/log" method="get">
+            <input type="text" name="id" id="id" placeholder="User ID" required>
+            <input type="date" name="from" id="from" placeholder="From">
+            <input type="date" name="to" id="to" placeholder="To">
+            <input type="number" name="limit" id="limit" placeholder="Limit">
+            <br>
+            <button class="btn btn-primary" type="submit">Get</button>
           </form>
         </div>
       </div>
