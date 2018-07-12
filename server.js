@@ -8,7 +8,7 @@ const shortid = require('shortid');
 const moment = require('moment');
 
 const app = express();
-mongoose.connect('mongodb://localhost:27017/test');
+mongoose.connect('mongodb://localhost:27017/tracker');
 
 // Schemas
 const newUserSchema = mongoose.Schema({
@@ -41,7 +41,7 @@ app.get('/', (request, response) => {
 app.post('/api/new-user', (request, response) => {
   console.log('Connection openned'); //eslint-disable-line
   const id = shortid.generate();
-  const newUser = new User({ name: request.body.username, id });
+  const newUser = new User({ name: request.body.name, id });
   newUser.save((err) => {
     if (err) return console.error(err); // eslint-disable-line
     return console.log('Saved'); // eslint-disable-line
@@ -51,19 +51,28 @@ app.post('/api/new-user', (request, response) => {
 
 app.post('/api/add', (request, response) => {
   // Find if the user exists in the database
-});
-
-app.get('/api/log', (request, response) => {
-  Exercise.findOne({ id: request.query.id }).exec((err, doc) => {
-    if (!doc) return response.send('No logs found!');
-    return response.json(doc);
+  User.findOne({ id: request.body.id }, (err, user) => {
+    if (err) return response.send('Cannot do database lookup. Please try again later');
+    if (!user) return response.send('No such user!');
+    const newExercise = request.body.date
+      ? new Exercise({
+        id: request.body.id,
+        description: request.body.description,
+        duration: request.body.duration,
+        date: moment(request.body.date, 'ddd MMM Do YYYY'),
+      })
+      : new Exercise({
+        id: request.body.id,
+        description: request.body.description,
+        duration: request.body.duration,
+      });
+    newExercise.save((error) => {
+      if (error) return response.send('Could not save the exercise, try again.');
+      return true;
+    });
+    return response.json(exercise);
   });
 });
-app.listen(process.env.PORT || 3000);
 
-// Notes
-request.body.date
-  ? moment(request.body.date, 'ddd MMM Do YYYY').toString()
-  : moment()
-    .format('ddd MMM Do YYYY')
-    .toString();
+app.get('/api/log', (request, response) => {});
+app.listen(process.env.PORT || 3000);
