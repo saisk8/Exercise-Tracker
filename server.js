@@ -74,5 +74,22 @@ app.post('/api/add', (request, response) => {
   });
 });
 
-app.get('/api/log', (request, response) => {});
+app.get('/api/log', (request, response) => {
+  const query = { id: request.query.id };
+  if (request.query.from) query.date = { $gte: request.query.from };
+  if (request.query.to) query.date = { $lte: request.query.to };
+  if (request.query.from && request.query.to) {
+    query.date = {
+      $and: [{ $gte: request.query.from }, { $lte: request.query.to }],
+    };
+  }
+  if (request.query.limit) query.limit = request.query.limit;
+  Exercise.find(query)
+    .limit(query.limit)
+    .exec((err, log) => {
+      if (err) return response.send('Error while searching, try again.');
+      if (!log) return response.send('No logs found');
+      return response.json(log);
+    });
+});
 app.listen(process.env.PORT || 3000);
