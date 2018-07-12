@@ -13,20 +13,17 @@ mongoose.connect('mongodb://localhost:27017/test');
 // Schemas
 const newUserSchema = mongoose.Schema({
   name: String,
-  id: String,
+  id: { type: String, unique: true },
 });
 const User = mongoose.model('User', newUserSchema);
 
 const exercise = mongoose.Schema({
-  id: String,
-  log: [
-    {
-      description: String,
-      duration: Number,
-      date: String,
-    },
-  ],
+  id: { type: String, unique: true },
+  description: String,
+  duration: Number,
+  date: { type: Date, default: moment().format('ddd MMM Do YYYY') },
 });
+
 const Exercise = mongoose.model('Exercise', exercise);
 
 const db = mongoose.connection;
@@ -54,64 +51,19 @@ app.post('/api/new-user', (request, response) => {
 
 app.post('/api/add', (request, response) => {
   // Find if the user exists in the database
-  let updatedLog;
-  const query = { id: request.body.id };
-  const tempDoc = User.findOne(query, (err, doc) => {
-    if (err) return false;
-    return doc;
-  });
-  if (tempDoc) {
-    if (tempDoc.log) {
-      updatedLog = tempDoc.log.push([
-        {
-          description: request.body.description,
-          duration: request.body.duration,
-          date: request.body.date
-            ? moment(request.body.date, 'ddd MMM Do YYYY').toString()
-            : moment()
-              .format('ddd MMM Do YYYY')
-              .toString(),
-        },
-      ]);
-    } else {
-      updatedLog = [
-        {
-          description: request.body.description,
-          duration: request.body.duration,
-          date: request.body.date
-            ? moment(request.body.date, 'ddd MMM Do YYYY').toString()
-            : moment()
-              .format('ddd MMM Do YYYY')
-              .toString(),
-        },
-      ];
-    }
-    Exercise.updateOne(query, { log: updatedLog }, (err) => {
-      if (err) return console.error(err); //eslint-disable-line
-      return true;
-    });
-    response.json({
-      id: request.body.id,
-      name: tempDoc.name,
-      description: request.body.description,
-      duration: request.body.duration,
-      date: updatedLog[0].date,
-    });
-  } else {
-    // If no such user
-    response.send('User not found');
-  }
 });
 
 app.get('/api/log', (request, response) => {
-  const doc = Exercise.findOne({ id: request.query.id }, (err, document) => {
-    if (err) return false;
-    return document;
+  Exercise.findOne({ id: request.query.id }).exec((err, doc) => {
+    if (!doc) return response.send('No logs found!');
+    return response.json(doc);
   });
-  if (doc) {
-    response.json({ Logs: doc.logs[0] });
-  } else {
-    response.send('No logs found!');
-  }
 });
 app.listen(process.env.PORT || 3000);
+
+// Notes
+request.body.date
+  ? moment(request.body.date, 'ddd MMM Do YYYY').toString()
+  : moment()
+    .format('ddd MMM Do YYYY')
+    .toString();
