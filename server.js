@@ -15,7 +15,7 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:')); // eslint-disable-line
 
 // Middleware
-app.use(express.static(`${__dirname}public`));
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Routes
