@@ -5,24 +5,31 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const shortid = require('shortid');
-const moment = require('moment');
+const User = require('./models/User');
+const Exercise = require('./models/Exercise');
 
 const app = express();
-mongoose.connect('mongodb://localhost:27017/tracker');
+mongoose.connect('mongodb://localhost:27017/new');
 
 // Schemas
-const newUserSchema = mongoose.Schema({
-  name: String,
-  id: { type: String, unique: true },
-});
+const newUserSchema = mongoose.Schema(
+  {
+    name: String,
+    userId: String,
+  },
+  { _id: false },
+);
 const User = mongoose.model('User', newUserSchema);
 
-const exercise = mongoose.Schema({
-  id: { type: String, unique: true },
-  description: String,
-  duration: Number,
-  date: { type: Date, default: moment().format('ddd MMM Do YYYY') },
-});
+const exercise = mongoose.Schema(
+  {
+    userId: String,
+    description: String,
+    duration: Number,
+    date: Date,
+  },
+  { _id: false },
+);
 
 const Exercise = mongoose.model('Exercise', exercise);
 
@@ -40,8 +47,8 @@ app.get('/', (request, response) => {
 
 app.post('/api/new-user', (request, response) => {
   console.log('Connection openned'); //eslint-disable-line
-  const id = shortid.generate();
-  const newUser = new User({ name: request.body.name, id });
+  const userId = shortid.generate();
+  const newUser = new User({ name: request.body.name, userId });
   newUser.save((err) => {
     if (err) return console.error(err); // eslint-disable-line
     return console.log('Saved'); // eslint-disable-line
@@ -51,45 +58,53 @@ app.post('/api/new-user', (request, response) => {
 
 app.post('/api/add', (request, response) => {
   // Find if the user exists in the database
-  User.findOne({ id: request.body.id }, (err, user) => {
+  User.findOne({ userId: request.body.id }, (err, user) => {
     if (err) return response.send('Cannot do database lookup. Please try again later');
     if (!user) return response.send('No such user!');
     const newExercise = request.body.date
       ? new Exercise({
-        id: request.body.id,
+        userId: request.body.id,
         description: request.body.description,
         duration: request.body.duration,
-        date: moment(request.body.date, 'ddd MMM Do YYYY'),
+        date: new Date(Date.parse(request.body.date)),
       })
       : new Exercise({
-        id: request.body.id,
+        userId: request.body.id,
         description: request.body.description,
         duration: request.body.duration,
+        date: new Date(),
       });
+    console.log(newExercise);
     newExercise.save((error) => {
-      if (error) return response.send('Could not save the exercise, try again.');
+      if (error) return console.log(error);
       return true;
     });
-    return response.json(exercise);
+    return response.json(newExercise);
   });
 });
 
 app.get('/api/log', (request, response) => {
-  const query = { id: request.query.id };
+  const query = { userId: request.query.id };
   if (request.query.from) query.date = { $gte: request.query.from };
   if (request.query.to) query.date = { $lte: request.query.to };
   if (request.query.from && request.query.to) {
     query.date = {
-      $and: [{ $gte: request.query.from }, { $lte: request.query.to }],
+      $gte: request.query.from,
+      $lte: request.query.to,
     };
   }
-  if (request.query.limit) query.limit = request.query.limit;
-  Exercise.find(query)
-    .limit(query.limit)
-    .exec((err, log) => {
-      if (err) return response.send('Error while searching, try again.');
+  if (request.query.limit) {
+    Exercise.find(query).exec((err, log) => {
+      if (err) return console.log(err);
+      if (!log) return response.send('No logs found');
+      return response.json({ Logs: log.slice(request.query.limit) });
+    });
+  } else {
+    Exercise.find(query).exec((err, log) => {
+      if (err) return console.log(err);
       if (!log) return response.send('No logs found');
       return response.json(log);
     });
+  }
 });
 app.listen(process.env.PORT || 3000);
