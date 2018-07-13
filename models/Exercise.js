@@ -1,14 +1,11 @@
 const mongoose = require('mongoose');
 
-const exercise = mongoose.Schema(
-  {
-    userId: String,
-    description: String,
-    duration: Number,
-    date: Date,
-  },
-  { _id: false },
-);
+const exercise = mongoose.Schema({
+  userId: String,
+  description: String,
+  duration: Number,
+  date: Date,
+});
 
 const Exercise = mongoose.model('Exercise', exercise);
 

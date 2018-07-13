@@ -36,7 +36,7 @@ app.post('/api/new-user', (request, response) => {
 
 app.post('/api/add', (request, response) => {
   // Find if the user exists in the database
-  User.findOne({ userId: request.body.id }, (err, user) => {
+  User.find({ userId: request.body.id }).exec((err, user) => {
     if (err) return response.send('Cannot do database lookup. Please try again later');
     if (!user) return response.send('No such user!');
     const newExercise = request.body.date
@@ -52,11 +52,11 @@ app.post('/api/add', (request, response) => {
         duration: request.body.duration,
         date: new Date(),
       });
-    newExercise.save((error) => {
+    newExercise.save((error, data) => {
       if (error) return response.send('Could not save the log, please try again');
-      return true;
+      return response.json(data);
     });
-    return response.json(newExercise);
+    return true;
   });
 });
 
@@ -71,11 +71,13 @@ app.get('/api/log', (request, response) => {
     };
   }
   if (request.query.limit) {
-    Exercise.find(query).exec((err, log) => {
-      if (err) return response.send('Error while searching, try again');
-      if (!log) return response.send('No logs found');
-      return response.json({ Logs: log.slice(request.query.limit) });
-    });
+    Exercise.find(query)
+      .select('userId description duration date')
+      .exec((err, log) => {
+        if (err) return response.send('Error while searching, try again');
+        if (!log) return response.send('No logs found');
+        return response.json({ Logs: log.slice(request.query.limit) });
+      });
   } else {
     Exercise.find(query).exec((err, log) => {
       if (err) return response.send('Error while searching, try again');
